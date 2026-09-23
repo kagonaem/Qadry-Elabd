@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+    <link rel="icon" type="image/png" href="a.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قدري العبد | رائد أعمال وصانع أثر</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Firebase (لحفظ تعليقات الزوار بشكل دائم عند رفع الموقع أونلاين — راجع التعليمات أسفل الملف) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <style>
+         :root {
+            --ink: #1c1b17;
+            --paper: #f6f2e8;
+            --paper-dim: #efe8d8;
+            --green: #0e3d2c;
+            --green-deep: #0a2c20;
+            --gold: #b08a4e;
+            --gold-soft: #d9c39a;
+            --red: #8f2f2f;
+            --line: #c9bc9c;
+            --white: #fffdf8;
+            --radius: 2px;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            margin: 0;
+            background: var(--paper);
+            color: var(--ink);
+            font-family: 'Cairo', sans-serif;
+            line-height: 1.7;
+        }
+        
+        h1,
+        h2,
+        h3,
+        .masthead-name,
+        .section-title {
+            font-family: 'Amiri', serif;
+        }
+        
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        
+        img {
+            max-width: 100%;
+            display: block;
+        }
+        
+        .wrap {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        /* ================= TOP BAR ================= */
+        
+        .topbar {
+            background: var(--green-deep);
+            color: var(--paper);
+            font-size: 13px;
+        }
+        
+        .topbar .wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .topbar .date {
+            opacity: .85;
+            letter-spacing: .3px;
+        }
+        
+        .topbar .quick-contact {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .topbar .quick-contact a {
+            opacity: .9;
+        }
+        
+        .topbar .quick-contact a:hover {
+            opacity: 1;
+            color: var(--gold-soft);
+        }
+        /* ================= MASTHEAD ================= */
+        
+        .masthead {
+            background: var(--paper);
+            border-bottom: 4px double var(--ink);
+        }
+        
+        .masthead .wrap {
+            padding: 28px 24px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .masthead-name {
+            font-size: 46px;
+            font-weight: 700;
+            color: var(--green-deep);
+            margin: 0;
+            letter-spacing: .5px;
+        }
+        
+        .masthead-sub {
+            margin: 4px 0 0;
+            font-size: 14px;
+            color: #5a5342;
+        }
+        
+        .masthead-flags {
+            font-size: 20px;
+            letter-spacing: 2px;
+        }
+        
+        .masthead-tagline {
+            text-align: left;
+            font-size: 13px;
+            color: #5a5342;
+            max-width: 260px;
+            border-right: 2px solid var(--gold);
+            padding-right: 14px;
+        }
+        /* ================= NAV ================= */
+        
+        nav.mainnav {
+            background: var(--green);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+        }
+        
+        nav.mainnav .wrap {
+            display: flex;
+            gap: 2px;
+            overflow-x: auto;
+        }
+        
+        nav.mainnav a {
+            color: var(--paper);
+            padding: 14px 18px;
+            font-size: 14.5px;
+            font-weight: 600;
+            white-space: nowrap;
+            border-left: 1px solid rgba(255, 255, 255, .08);
+            transition: background .2s;
+        }
+        
+        nav.mainnav a:hover {
+            background: var(--green-deep);
+            color: var(--gold-soft);
+        }
+        /* ================= BREAKING NEWS TICKER ================= */
+        
+        .ticker-bar {
+            background: var(--red);
+            color: var(--white);
+            display: flex;
+            align-items: stretch;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .ticker-label {
+            flex-shrink: 0;
+            background: var(--green-deep);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: .3px;
+            z-index: 2;
+        }
+        
+        .ticker-label .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--white);
+            animation: tickerPulse 1.2s infinite;
+        }
+        
+        @keyframes tickerPulse {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: .35;
+                transform: scale(.75);
+            }
+        }
+        
+        .ticker-track-wrap {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .ticker-track {
+            display: flex;
+            white-space: nowrap;
+            width: max-content;
+            animation: tickerScroll 32s linear infinite;
+            padding: 9px 0;
+        }
+        
+        .ticker-track:hover {
+            animation-play-state: paused;
+        }
+        
+        .ticker-track span {
+            padding: 0 34px;
+            font-size: 13px;
+            font-weight: 600;
+            position: relative;
+        }
+        
+        .ticker-track span:not(:last-child)::after {
+            content: "●";
+            position: absolute;
+            left: -4px;
+            font-size: 7px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold-soft);
+        }
+        
+        @keyframes tickerScroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        
+        @media(max-width:520px) {
+            .ticker-label {
+                padding: 9px 12px;
+                font-size: 11.5px;
+            }
+            .ticker-track span {
+                font-size: 12px;
+                padding: 0 24px;
+            }
+        }
+        /* ================= HERO ================= */
+        
+        .hero {
+            background: linear-gradient(180deg, var(--paper) 0%, var(--paper-dim) 100%);
+            border-bottom: 1px solid var(--line);
+        }
+        
+        .hero .wrap {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            padding: 44px 24px 40px;
+            align-items: center;
+        }
+        
+        .hero-photo {
+            width: 280px;
+            height: 340px;
+            background: linear-gradient(160deg, var(--green) 0%, var(--green-deep) 100%);
+            border: 6px solid var(--white);
+            outline: 1px solid var(--line);
+            box-shadow: 0 10px 26px rgba(10, 44, 32, .25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold-soft);
+            font-family: 'Amiri', serif;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            padding: 0;
+        }
+        
+        .hero-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .hero-photo .initials {
+            font-size: 64px;
+            font-weight: 700;
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .hero-photo .ph-label {
+            font-size: 13px;
+            font-family: 'Cairo', sans-serif;
+            opacity: .85;
+        }
+        
+        .hero-eyebrow {
+            display: inline-block;
+            background: var(--red);
+            color: var(--white);
+            font-size: 12.5px;
+            padding: 5px 12px;
+            border-radius: var(--radius);
+            margin-bottom: 14px;
+            letter-spacing: .3px;
+        }
+        
+        .hero h1 {
+            font-size: 38px;
+            color: var(--green-deep);
+            margin: 0 0 6px;
+        }
+        
+        .hero .role {
+            font-size: 17px;
+            color: var(--gold);
+            font-weight: 600;
+            margin: 0 0 18px;
+        }
+        
+        .hero p.lead {
+            font-size: 16.5px;
+            color: #3a3628;
+            max-width: 640px;
+            margin: 0 0 22px;
+        }
+        
+        .stat-row {
+            display: flex;
+            gap: 0;
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            max-width: 640px;
+        }
+        
+        .stat {
+            flex: 1;
+            padding: 14px 12px;
+            text-align: center;
+            border-left: 1px solid var(--line);
+        }
+        
+        .stat:first-child {
+            border-left: none;
+        }
+        
+        .stat .num {
+            font-family: 'Amiri', serif;
+            font-size: 26px;
+            color: var(--green-deep);
+            font-weight: 700;
+            display: block;
+        }
+        
+        .stat .lbl {
+            font-size: 12.5px;
+            color: #6b6350;
+        }
+        /* ================= SECTION GENERIC ================= */
+        
+        section {
+            padding: 52px 0;
+        }
+        
+        .section-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            border-bottom: 3px solid var(--ink);
+            padding-bottom: 10px;
+            margin-bottom: 28px;
+        }
+        
+        .section-title {
+            font-size: 28px;
+            color: var(--green-deep);
+            margin: 0;
+        }
+        
+        .section-note {
+            font-size: 13px;
+            color: #7a725d;
+        }
+        
+        .band-alt {
+            background: var(--white);
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+        }
+        /* ================= NEWS GRID ================= */
+        
+        .news-grid {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr 1fr;
+            gap: 26px;
+        }
+        
+        .news-card {
+            background: var(--white);
+            border: 1px solid var(--line);
+        }
+        
+        .news-card.lead-card {
+            grid-row: span 2;
+        }
+        
+        .news-thumb {
+            height: 170px;
+            background: repeating-linear-gradient(135deg, var(--green) 0, var(--green) 12px, var(--green-deep) 12px, var(--green-deep) 24px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold-soft);
+            font-size: 13px;
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .news-card.lead-card .news-thumb {
+            height: 230px;
+        }
+        
+        .news-body {
+            padding: 16px 18px 20px;
+        }
+        
+        .news-tag {
+            font-size: 11.5px;
+            color: var(--red);
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: block;
+        }
+        
+        .news-card h3 {
+            font-size: 19px;
+            margin: 0 0 8px;
+            color: var(--ink);
+            line-height: 1.5;
+        }
+        
+        .news-card.lead-card h3 {
+            font-size: 23px;
+        }
+        
+        .news-card p {
+            font-size: 14px;
+            color: #4d4636;
+            margin: 0 0 10px;
+        }
+        
+        .news-meta {
+            font-size: 12px;
+            color: #9a9174;
+            border-top: 1px dashed var(--line);
+            padding-top: 8px;
+        }
+        /* ================= GALLERY ================= */
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .gallery-item {
+            background: var(--white);
+            border: 1px solid var(--line);
+            overflow: hidden;
+        }
+        
+        .gallery-photo {
+            height: 190px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold-soft);
+            font-size: 13px;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .gallery-photo.g1 {
+            background: linear-gradient(145deg, #0e3d2c, #1a5c42);
+        }
+        
+        .gallery-photo.g2 {
+            background: linear-gradient(145deg, #8f2f2f, #6f2222);
+        }
+        
+        .gallery-photo.g3 {
+            background: linear-gradient(145deg, #b08a4e, #8a6a37);
+        }
+        
+        .gallery-photo.g4 {
+            background: linear-gradient(145deg, #0a2c20, #0e3d2c);
+        }
+        
+        .gallery-photo.g5 {
+            background: linear-gradient(145deg, #6f2222, #8f2f2f);
+        }
+        
+        .gallery-photo.g6 {
+            background: linear-gradient(145deg, #8a6a37, #b08a4e);
+        }
+        
+        .gallery-cap {
+            padding: 14px 16px;
+        }
+        
+        .gallery-cap h4 {
+            margin: 0 0 6px;
+            font-size: 15.5px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            color: #f8f7f6;
+        }
+        
+        .gallery-cap p {
+            margin: 0;
+            font-size: 13px;
+            color: #f8f7f6;
+        }
+        /* ================= ABOUT ================= */
+        
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 44px;
+            align-items: start;
+        }
+        
+        .about-grid h3 {
+            font-size: 15px;
+            color: var(--gold);
+            text-transform: none;
+            margin: 26px 0 8px;
+        }
+        
+        .about-grid p {
+            font-size: 15.5px;
+            color: #000000;
+            margin: 0 0 14px;
+        }
+        
+        .pull-card {
+            background: var(--green-deep);
+            color: var(--paper);
+            padding: 26px 24px;
+            border-top: 4px solid var(--gold);
+        }
+        
+        .pull-card .quote {
+            color: #fffdf8;
+            font-family: 'Amiri', serif;
+            font-size: 20px;
+            line-height: 1.6;
+            margin: 0 0 14px;
+        }
+        
+        .pull-card .attrib {
+            font-size: 13px;
+            color: var(--gold-soft);
+        }
+        /* ================= PARTY ================= */
+        
+        .party-card {
+            background: var(--white);
+            border: 1px solid var(--line);
+            display: grid;
+            grid-template-columns: 130px 1fr;
+            gap: 24px;
+            padding: 24px;
+            align-items: center;
+        }
+        
+        .party-emblem {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, var(--gold-soft), var(--gold) 60%, #8a6a37 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 3px solid var(--green-deep);
+            flex-shrink: 0;
+            padding: 0;
+        }
+        
+        .party-emblem img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        
+        .party-card h3 {
+            margin: 0 0 8px;
+            font-size: 20px;
+            color: var(--green-deep);
+        }
+        
+        .party-card p {
+            margin: 0 0 6px;
+            font-size: 14.5px;
+            color: #3a3628;
+        }
+        
+        .badge-row {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            font-size: 12px;
+            background: var(--paper-dim);
+            border: 1px solid var(--line);
+            padding: 4px 10px;
+            color: #5a5342;
+        }
+        /* ================= COMMENTS ================= */
+        
+        .comment {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-right: 4px solid var(--gold);
+            padding: 18px 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, .06);
+        }
+        
+        .comment-name {
+            font-family: 'Amiri', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--green-deep);
+            margin-bottom: 7px;
+        }
+        
+        .comment-text {
+            color: #555;
+            line-height: 1.9;
+            font-size: 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--green-deep);
+            color: var(--white);
+            border: none;
+            padding: 11px 22px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: var(--radius);
+            transition: background .2s;
+        }
+        
+        .btn:hover {
+            background: var(--green);
+        }
+        
+        .btn.gold {
+            background: var(--gold);
+            color: var(--green-deep);
+        }
+        
+        .btn.gold:hover {
+            background: var(--gold-soft);
+        }
+        
+        #comment-status {
+            font-size: 12.5px;
+            margin-top: 4px;
+            color: var(--green);
+            min-height: 16px;
+        }
+        
+        .comment-list {
+            max-height: 520px;
+            overflow-y: auto;
+            padding-left: 6px;
+        }
+        
+        .comment-item {
+            background: var(--white);
+            border: 1px solid var(--line);
+            border-right: 4px solid var(--gold);
+            padding: 14px 16px;
+            margin-bottom: 14px;
+        }
+        
+        .comment-item .cname {
+            font-weight: 700;
+            color: var(--green-deep);
+            font-size: 14px;
+        }
+        
+        .comment-item .cdate {
+            font-size: 11.5px;
+            color: #9a9174;
+            margin-right: 8px;
+        }
+        
+        .comment-item p {
+            margin: 8px 0 0;
+            font-size: 14px;
+            color: #3a3628;
+        }
+        
+        .comment-empty {
+            font-size: 13.5px;
+            color: #9a9174;
+            text-align: center;
+            padding: 30px 10px;
+            border: 1px dashed var(--line);
+        }
+        /* ================= CONTACT ================= */
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        
+        .contact-block h4 {
+            font-size: 15px;
+            color: var(--gold);
+            margin: 0 0 14px;
+        }
+        
+        .contact-line {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--white);
+            border: 1px solid var(--line);
+            margin-bottom: 12px;
+        }
+        
+        .contact-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--green-deep);
+            color: var(--gold-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        
+        .contact-line .info {
+            font-size: 14px;
+        }
+        
+        .contact-line .info .label {
+            display: block;
+            font-size: 11.5px;
+            color: #9a9174;
+        }
+        
+        .contact-line .info .value {
+            font-weight: 700;
+            color: var(--ink);
+            direction: ltr;
+            display: inline-block;
+        }
+        
+        .social-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        
+        .request-form {
+            background: var(--white);
+            border: 1px solid var(--line);
+            padding: 22px;
+        }
+        
+        .request-form input,
+        .request-form textarea,
+        .request-form select {
+            width: 100%;
+            font-family: 'Cairo', sans-serif;
+            border: 1px solid var(--line);
+            background: var(--paper);
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            border-radius: var(--radius);
+        }
+        
+        .request-form textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        /* ================= FOOTER ================= */
+        
+        footer {
+            background: var(--green-deep);
+            color: var(--paper-dim);
+            padding: 34px 0 20px;
+            font-size: 13px;
+        }
+        
+        footer .wrap {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+        }
+        
+        footer .fname {
+            font-family: 'Amiri', serif;
+            font-size: 18px;
+            color: var(--white);
+        }
+        
+        footer a {
+            color: var(--gold-soft);
+        }
+        
+        .fine {
+            opacity: .6;
+            margin-top: 14px;
+            font-size: 11.5px;
+        }
+        
+        @media(max-width:880px) {
+            .hero .wrap {
+                grid-template-columns: 1fr;
+            }
+            .hero-photo {
+                width: 100%;
+                max-width: 280px;
+                margin: 0 auto;
+            }
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+            .news-card.lead-card {
+                grid-row: auto;
+            }
+            .gallery-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+            .party-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .party-emblem {
+                margin: 0 auto;
+            }
+            .comments-wrap {
+                grid-template-columns: 1fr;
+            }
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            .masthead-tagline {
+                display: none;
+            }
+        }
+        
+        @media(max-width:520px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            .masthead-name {
+                font-size: 34px;
+            }
+            .hero h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="topbar">
+        <div class="wrap">
+            <span class="date" id="hijri-date">الخميس، 10 سبتمبر 2026</span>
+            <div class="quick-contact">
+                <a href="tel:+201029209008">📞 مصر: 010 2920 9008</a>
+                <a href="tel:+96651126888">📞 السعودية: 96 651126888</a>
+                <a href="https://www.facebook.com/share/1K7Kb6vaxN/" id="topbar-fb">فيسبوك</a>
+            </div>
+        </div>
+    </div>
+
+    <header class="masthead">
+        <div class="wrap">
+            <div>
+                <h1 class="masthead-name">قدري العبد</h1>
+                <p class="masthead-sub">صحيفة الأخبار والفعاليات الرسمية</p>
+            </div>
+            <div class="masthead-tagline">
+                رجل أعمال مصري 🇪🇬 | ابن البلد<br> صاحب رؤية.. وصانع أثر
+            </div>
+        </div>
+    </header>
+
+    <nav class="mainnav">
+        <div class="wrap">
+            <a href="#home">الرئيسية</a>
+            <a href="#news">أخبار اليوم</a>
+            <a href="#charity">الأعمال الخيرية</a>
+            <a href="#about">من هو قدري العبد</a>
+            <a href="#party">الانتماء الحزبي</a>
+            <a href="#comments">آراء الزوار</a>
+            <a href="#contact">تواصل معنا</a>
+        </div>
+    </nav>
+
+    <div class="ticker-bar">
+        <div class="ticker-label"><span class="dot"></span> عاجل</div>
+        <div class="ticker-track-wrap">
+            <div class="ticker-track" id="ticker-track">
+                <!-- المحتوى يُبنى تلقائيًا من نفس القائمة مرتين لعمل تمرير متصل -->
+            </div>
+        </div>
+    </div>
+
+    <section class="hero" id="home">
+        <div class="wrap">
+            <div class="hero-photo ph-img">
+                <div class="initials"></div>
+
+                <img src="c.png" alt="Profile Photo">
+
+                <div class="ph-label"></div>
+            </div>
+            <div>
+                <span class="hero-eyebrow">ملف شخصي</span>
+                <h1>قدري العبد</h1>
+                <p class="role">رجل أعمال مصري 🇪🇬 | ابن البلد — دعم الشباب · خدمة المجتمع · ريادة الأعمال</p>
+                <p class="lead">
+                    مصري الأصل والمنشأ، يواصل قدري العبد رحلته بين ريادة الأعمال والعمل الخيري، وله نشاط اقتصادي يمتد إلى المملكة العربية السعودية، حاملًا رؤية تقوم على دعم الشباب وخدمة المجتمع، وصانعًا لأثر حقيقي في كل مبادرة يشارك فيها.
+                </p>
+                <div class="stat-row">
+                    <div class="stat"><span class="num">+20</span><span class="lbl">فعالية خيرية</span></div>
+                    <div class="stat"><span class="num">2</span><span class="lbl">نشاط بين مصر والسعودية</span></div>
+                    <div class="stat"><span class="num">1</span><span class="lbl">انتماء حزبي فعّال</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="news">
+        <div class="wrap">
+            <div class="section-head">
+                <h2 class="section-title">أخبار اليوم</h2>
+                <span class="section-note">آخر تحديث: اليوم</span>
+            </div>
+            <div class="news-grid">
+
+                <!-- الخبر الرئيسي -->
+                <div class="news-card lead-card">
+                    <div class="news-thumb ph-img">
+                        <img src="17.jpeg" alt="مدبولي يشارك في قمة حول فلسطين وحل الدولتين">
+                    </div>
+
+                    <div class="news-body">
+                        <span class="news-tag">أخبار سياسية</span>
+
+                        <h3>مدبولي يشارك في قمة حول فلسطين وحل الدولتين</h3>
+
+                        <p>
+                            شارك رئيس الوزراء مصطفى مدبولي، نيابةً عن الرئيس عبد الفتاح السيسي، في قمة حول القضية الفلسطينية وحل الدولتين على هامش اجتماعات الجمعية العامة للأمم المتحدة. وأكد في كلمة مصر أن التسوية السياسية للقضية الفلسطينية يجب أن تفضي إلى إقامة دولة فلسطينية على
+                            حدود 4 يونيو 1967 وعاصمتها القدس الشرقية.
+                        </p>
+
+                        <div class="news-meta">قسم: أخبار سياسية</div>
+                    </div>
+                </div>
+
+
+                <!-- الخبر الثاني -->
+                <div class="news-card">
+                    <div class="news-thumb ph-img">
+                        <img src="18.jpg" alt="وزير الخارجية المصري يشارك في اجتماع مجلس السلام بشأن غزة">
+                    </div>
+
+                    <div class="news-body">
+                        <span class="news-tag">أخبار سياسية</span>
+
+                        <h3>وزير الخارجية المصري يشارك في اجتماع مجلس السلام بشأن غزة</h3>
+
+                        <p>
+                            شارك وزير الخارجية بدر عبد العاطي اليوم في اجتماع مجلس السلام في غزة، بحضور عدد من المسؤولين الدوليين، في إطار التحركات المتعلقة بالوضع في قطاع غزة وجهود السلام.
+                        </p>
+
+                        <div class="news-meta">قسم: أخبار سياسية</div>
+                    </div>
+                </div>
+
+
+                <!-- الخبر الثالث -->
+                <div class="news-card">
+                    <div class="news-thumb ph-img">
+                        <img src="19.jpg" alt="الحكومة تقرر استمرار العمل عن بُعد يوم الأحد">
+                    </div>
+
+                    <div class="news-body">
+                        <span class="news-tag">أخبار سياسية</span>
+
+                        <h3>الحكومة تقرر استمرار العمل عن بُعد يوم الأحد</h3>
+
+                        <p>
+                            وافق مجلس الوزراء خلال اجتماعه اليوم برئاسة مصطفى مدبولي على استمرار تطبيق نظام العمل عن بُعد يوم الأحد من كل أسبوع للعاملين بالجهات والمنشآت المشمولة بالقرار، وذلك خلال شهر سبتمبر 2026.
+                        </p>
+
+                        <div class="news-meta">قسم: أخبار سياسية</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="band-alt " id="charity ">
+        <div class="wrap ">
+            <div class="section-head ">
+                <h2 class="section-title ">الأعمال الخيرية والفعاليات</h2>
+                <span class="section-note ">أرشيف الصور والمشاركات</span>
+            </div>
+
+            <div class="gallery-grid ">
+
+                <div class="gallery-item ">
+                    <div class="gallery-photo g1 ph-img ">
+                        <img src="(3).jpg " alt="توزيع مساعدات غذائية ">
+                    </div>
+                    <div class="gallery-cap ">
+                        <h4>تكريم طلاب الثانوية العامة</h4>
+                        <p>دعم نفسي للطلاب.</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item ">
+                    <div class="gallery-photo g2 ph-img ">
+                        <img src="(2).jpg " alt="رعاية ملتقى شبابي ">
+                    </div>
+                    <div class="gallery-cap ">
+                        <h4>تكريم طلاب الثانوية العامة</h4>
+                        <p>دعم نفسي للطلاب.</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item ">
+                    <div class="gallery-photo g3 ph-img ">
+                        <img src="(4).jpg " alt="حملة كسوة الشتاء ">
+                    </div>
+                    <div class="gallery-cap ">
+                        <h4>مبادرة تعليمية للأطفال</h4>
+                        <p>دعم مستلزمات مدرسية للطلاب.</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item ">
+                    <div class="gallery-photo g4 ph-img ">
+                        <img src="(5).jpg " alt="دعم مشروع صحي مجتمعي ">
+                    </div>
+                    <div class="gallery-cap ">
+                        <h4>مبادرة تعليمية للأطفال</h4>
+                        <p>دعم مستلزمات مدرسية للطلاب.</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item ">
+                    <div class="gallery-photo g5 ph-img ">
+                        <img src="(6).jpg " alt="لقاء مع رواد أعمال شباب ">
+                    </div>
+                    <div class="gallery-cap ">
+                        <h4>تكريم طلاب الثانوية العامة</h4>
+                        <p>دعم نفسي للطلاب.</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item ">
+                    <div class="gallery-photo g6 ph-img ">
+                        <img src="(7).jpg " alt="مبادرة تعليمية للأطفال ">
+                    </div>
+                    <div class="gallery-cap ">
+                        <h4>مبادرة تعليمية للأطفال</h4>
+                        <p>دعم مستلزمات مدرسية للطلاب.</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item ">
+                    <div class="gallery-photo g6 ph-img ">
+                        <img src="(8).jpg " alt="مبادرة تعليمية للأطفال ">
+                    </div>
+                    <div class="gallery-cap ">
+                        <h4>مبادرة تعليمية للأطفال</h4>
+                        <p>دعم مستلزمات مدرسية للطلاب.</p>
+                    </div>
+                </div>
+                <div class="gallery-item ">
+                    <div class="gallery-photo g6 ph-img ">
+                        <img src="(9).jpg " alt="مبادرة تعليمية للأطفال ">
+                    </div>
+                    <div class="gallery-cap ">
+                        <h4>مبادرة تعليمية للأطفال</h4>
+                        <p>دعم مستلزمات مدرسية للطلاب.</p>
+                    </div>
+                </div>
+                <div class="gallery-item ">
+                    <div class="gallery-photo g6 ph-img ">
+                        <img src="(10).jpg " alt="مبادرة تعليمية للأطفال ">
+                    </div>
+                    <div class="gallery-cap ">
+                        <h4>تكريم ابن البلد</h4>
+                        <p>تكريم الاستاذ قدري العبد - ابن البلد .</p>
+                    </div>
+                </div>
+                <div class="gallery-item ">
+                    <div class="gallery-photo g6 ph-img ">
+                        <img src="(11).jpg " alt="مبادرة تعليمية للأطفال ">
+                    </div>
+                    <div class="gallery-cap ">
+                        <h4>تكريم ابن البلد</h4>
+                        <p>تكريم الاستاذ قدري العبد - ابن البلد .</p>
+                    </div>
+                </div>
+                <div class="gallery-item ">
+                    <div class="gallery-photo g6 ph-img ">
+                        <img src="(12).jpg " alt="مبادرة تعليمية للأطفال ">
+                    </div>
+                    <div class="gallery-cap ">
+                        <h4>تكريم ابن البلد</h4>
+                        <p>تكريم الاستاذ قدري العبد - ابن البلد .</p>
+                    </div>
+                </div>
+                <div class="gallery-item ">
+                    <div class="gallery-photo g6 ph-img ">
+                        <img src="(13).jpg " alt="مبادرة تعليمية للأطفال ">
+                    </div>
+                    <div class="gallery-cap ">
+                        <h4>تكريم ابن البلد</h4>
+                        <p>تكريم الاستاذ قدري العبد - ابن البلد .</p>
+                    </div>
+                </div>
+                <div class="gallery-item ">
+                    <div class="gallery-photo g6 ph-img ">
+                        <img src="(14).jpg " alt="مبادرة تعليمية للأطفال ">
+                    </div>
+                    <div class="gallery-cap ">
+                        <h4>تكريم طلاب الثانوية العامة</h4>
+                        <p>دعم نفسي للطلاب.</p>
+                    </div>
+                </div>
+                <div class="gallery-item ">
+                    <div class="gallery-photo g6 ph-img ">
+                        <img src="(15).jpg " alt="مبادرة تعليمية للأطفال ">
+                    </div>
+                    <div class="gallery-cap ">
+                        <h4>تكريم طلاب الثانوية العامة</h4>
+                        <p>دعم نفسي للطلاب.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <section id="about ">
+        <div class="wrap ">
+            <div class="section-head ">
+                <h2 class="section-title ">من هو قدري العبد</h2>
+            </div>
+            <div class="about-grid ">
+                <div>
+                    <p>
+                        قدري العبد رجل أعمال مصري، جمع بين النشاط الاقتصادي والعمل المجتمعي منذ سنوات طويلة، وله امتداد لنشاطه التجاري في المملكة العربية السعودية. يصف نفسه بـ"ابن البلد "، في إشارة إلى ارتباطه العميق بجذوره المصرية وانتمائه الأصيل لمصر رغم اتساع نشاطه خارجها.
+                    </p>
+                    <h3>الرؤية</h3>
+                    <p>
+                        يؤمن قدري العبد بأن نجاح رجل الأعمال الحقيقي يُقاس بمقدار الأثر الذي يتركه في من حوله، لذلك يخصص جزءًا كبيرًا من وقته وجهده لدعم المبادرات الخيرية ومشاريع الشباب.
+                    </p>
+                    <h3>مجالات الاهتمام</h3>
+                    <p>دعم الشباب وريادة الأعمال · خدمة المجتمع والعمل الخيري · بناء جسور تواصل بين مصر والسعودية.</p>
+                </div>
+                <div class="pull-card ">
+                    <p class="quote ">"النجاح الحقيقي هو الأثر الذي تتركه، لا الثروة التي تجمعها. "</p>
+                    <p class="attrib ">— قدري العبد</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="band-alt " id="party ">
+        <div class="wrap ">
+            <div class="section-head ">
+                <h2 class="section-title ">الانتماء الحزبي</h2>
+            </div>
+
+            <div class="party-card ">
+                <div class="party-emblem ">
+                    <img src="b.jpeg " alt="شعار الحزب ">
+                </div>
+
+                <div>
+                    <h3>عضو فعّال في الحزب</h3>
+                    <p>
+                        يحمل قدري العبد عضوية فعالة ضمن صفوف الحزب، ويشارك في أنشطته المجتمعية والسياسية بما ينسجم مع رؤيته في خدمة الوطن ودعم قضايا الشباب.
+                    </p>
+
+                    <div class="badge-row ">
+                        <span class="badge ">عضوية فعّالة</span>
+                        <span class="badge ">مشاركة مجتمعية</span>
+                        <span class="badge ">دعم قضايا الشباب</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="comments ">
+        <div class="wrap ">
+            <div class="section-head ">
+                <h2 class="section-title ">آراء ومشاركات الزوار</h2>
+                <span class="section-note ">آراء الزوار</span>
+            </div>
+
+            <div class="comments-wrap ">
+
+                <div class="comment-list " id="comment-list ">
+
+                    <div class="comment ">
+                        <div class="comment-name ">أحمد محمد</div>
+                        <div class="comment-text ">
+                            شخصية محترمة ودائمًا حريص على خدمة الناس والمشاركة في الأعمال المجتمعية.
+                        </div>
+                    </div>
+
+                    <div class="comment ">
+                        <div class="comment-name ">محمد السيد</div>
+                        <div class="comment-text ">
+                            من الشخصيات التي لها حضور واضح ومشاركة فعالة في خدمة المجتمع ودعم الشباب.
+                        </div>
+                    </div>
+
+                    <div class="comment ">
+                        <div class="comment-name ">محمود حسن</div>
+                        <div class="comment-text ">
+                            كل التوفيق والنجاح، ومزيد من العطاء والمشاركة في المبادرات المجتمعية.
+                        </div>
+                    </div>
+
+                    <div class="comment ">
+                        <div class="comment-name ">سارة أحمد</div>
+                        <div class="comment-text ">
+                            جهود مميزة ومشاركة حقيقية في دعم المجتمع والأسر الأولى بالرعاية.
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="band-alt " id="contact ">
+        <div class="wrap ">
+            <div class="section-head ">
+                <h2 class="section-title ">تواصل معنا</h2>
+            </div>
+            <div class="contact-grid ">
+                <div class="contact-block ">
+                    <h4>بيانات التواصل المباشر</h4>
+                    <div class="contact-line ">
+                        <div class="contact-icon ">📱</div>
+                        <div class="info "><span class="label ">واتساب / اتصال — مصر</span><span class="value ">+20 10 2920 9008</span></div>
+                    </div>
+                    <div class="contact-line ">
+                        <div class="contact-icon ">📱</div>
+                        <div class="info "><span class="label ">واتساب / اتصال — السعودية</span><span class="value ">+966 51 126 888</span></div>
+                    </div>
+                    <div class="contact-line ">
+                        <div class="contact-icon ">📘</div>
+                        <div class="info "><span class="label ">صفحة فيسبوك الرسمية</span><span class="value ">قدري العبد</span></div>
+                    </div>
+                    <div class="social-buttons ">
+                        <a class="btn " href="https://wa.me/201029209008 " target="_blank ">واتساب مصر</a>
+                        <a class="btn " href="https://wa.me/96651126888 " target="_blank ">واتساب السعودية</a>
+                        <a class="btn gold " href="https://www.facebook.com/share/1K7Kb6vaxN/ " id="fb-btn " target="_blank ">صفحة الفيسبوك</a>
+                    </div>
+                </div>
+                <div class="contact-block ">
+                    <h4>إرسال طلب أو استفسار</h4>
+                    <div class="request-form ">
+                        <input type="text " id="r-name " placeholder="الاسم بالكامل ">
+                        <input type="text " id="r-phone " placeholder="رقم الهاتف ">
+                        <select id="r-type ">
+            <option value=" ">نوع الطلب</option>
+            <option value="تعاون خيري ">تعاون في عمل خيري</option>
+            <option value="فرصة استثمارية ">فرصة استثمارية</option>
+            <option value="دعوة لفعالية ">دعوة لفعالية</option>
+            <option value="استفسار عام ">استفسار عام</option>
+          </select>
+                        <textarea id="r-msg " placeholder="تفاصيل الطلب... "></textarea>
+                        <button class="btn " onclick="sendRequest() ">إرسال الطلب عبر واتساب</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="wrap ">
+            <div>
+                <div class="fname ">قدري العبد</div>
+                <div style="opacity:.8; ">رجل أعمال مصري 🇪🇬 | ابن البلد — صاحب رؤية.. وصانع أثر</div>
+            </div>
+            <div>
+                <a href="https://www.facebook.com/share/1K7Kb6vaxN/ " id="footer-fb ">فيسبوك</a> ·
+                <a href="https://wa.me/201029209008 ">واتساب مصر</a> ·
+                <a href="https://wa.me/96651126888 ">واتساب السعودية</a>
+            </div>
+        </div>
+        <div class="wrap fine ">© 2026 قدري العبد. جميع الحقوق محفوظة.</div>
+    </footer>
+
+    <script>
+        // ضع رابط صفحة الفيسبوك الحقيقي هنا مرة واحدة وسيتم تحديثه في كل الموقع
+        const FACEBOOK_URL_HERE = "https://www.facebook.com/share/1K7Kb6vaxN/ "; // مثال: "https://facebook.com/qadri.alabd "
+        document.querySelectorAll('#topbar-fb, #fb-btn, #footer-fb').forEach(el => {
+            el.setAttribute('href', FACEBOOK_URL_HERE);
+        });
+
+        // تحديث بسيط للتاريخ
+        const dEl = document.getElementById('hijri-date');
+        const now = new Date();
+        const days = ["الأحد ", "الإثنين ", "الثلاثاء ", "الأربعاء ", "الخميس ", "الجمعة ", "السبت "];
+        const months = ["يناير ", "فبراير ", "مارس ", "أبريل ", "مايو ", "يونيو ", "يوليو ", "أغسطس ", "سبتمبر ", "أكتوبر ", "نوفمبر ", "ديسمبر "];
+        dEl.textContent = `${days[now.getDay()]}، ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+        // ================= الشريط الإخباري (عاجل) =================
+        // يقرأ عناوين الأخبار تلقائيًا من قسم "أخبار اليوم " ويكررها مرتين لتمرير متصل بلا فجوة.
+        (function initTicker() {
+            const headlines = Array.from(document.querySelectorAll('#news .news-card h3')).map(h => h.textContent.trim());
+            const extra = ["تابعوا آخر مستجدات الفعاليات والمبادرات الخيرية أولًا بأول "];
+            const items = headlines.length ? headlines : extra;
+            const track = document.getElementById('ticker-track');
+            const build = () => items.map(t => `<span>${t}</span>`).join('');
+            track.innerHTML = build() + build(); // تكرار المحتوى لضمان استمرارية التمرير دون فراغ
+        })();
+
+        // ================= نظام التعليقات (يعمل أونلاين عبر Firebase) =================
+        //
+        // خطوات التفعيل (مرة واحدة فقط، مجانًا بالكامل):
+        // 1) افتح https://console.firebase.google.com وأنشئ مشروع جديد.
+        // 2) من القائمة الجانبية: Build > Firestore Database > Create database (اختر Start in test mode مبدئيًا).
+        // 3) من إعدادات المشروع (⚙️ Project settings) > Your apps > أضف تطبيق ويب (</>) وانسخ بيانات firebaseConfig.
+        // 4) الصق البيانات مكان FIREBASE-CONFIG-HERE بالأسفل بدلاً من القيم التجريبية.
+        // 5) (مهم للأمان) في Firestore > Rules الصق القواعد الموجودة في تعليق أسفل الملف، ثم Publish.
+        // ما لم تُستبدل بيانات الإعداد، سيعمل الموقع تلقائيًا بنظام معاينة مؤقت داخل بيئة Claude فقط.
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDPjbHjErSR9FGBu5uGuikEd1zQQcxjEBg ",
+            authDomain: "qadry-d494d.firebaseapp.com ",
+            projectId: "qadry-d494d ",
+            storageBucket: "qadry-d494d.firebasestorage.app ",
+            messagingSenderId: "634592999946 ",
+            appId: "1:634592999946:web:1f9e5c0754c35557bb7df3 ",
+            measurementId: "G-4ZJKBBP4QG "
+        };
+
+        let db = null;
+        let useFirebase = false;
+        try {
+            if (firebaseConfig.apiKey !== "FIREBASE-CONFIG-HERE " && typeof firebase !== 'undefined') {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                useFirebase = true;
+            }
+        } catch (e) {
+            useFirebase = false;
+        }
+
+        let comments = [];
+
+        function renderComments() {
+            const list = document.getElementById('comment-list');
+            if (comments.length === 0) {
+                list.innerHTML = '<div class="comment-empty " id="comment-empty ">لا توجد تعليقات بعد — كن أول من يشارك رأيه.</div>';
+                return;
+            }
+            list.innerHTML = comments.slice().reverse().map(c => `
+      <div class="comment-item ">
+        <span class="cname ">${escapeHtml(c.name)}</span><span class="cdate ">${c.date}</span>
+        <p>${escapeHtml(c.text)}</p>
+      </div>
+    `).join('');
+        }
+
+        function escapeHtml(str) {
+            const d = document.createElement('div');
+            d.innerText = str;
+            return d.innerHTML;
+        }
+
+        async function loadComments() {
+            if (useFirebase) {
+                // تحديث فوري ومباشر لكل الزوار عند إضافة أي تعليق جديد (بلا حاجة لتحديث الصفحة)
+                db.collection('comments').orderBy('createdAt', 'asc').onSnapshot(snapshot => {
+                    comments = snapshot.docs.map(doc => {
+                        const d = doc.data();
+                        const dt = d.createdAt && d.createdAt.toDate ? d.createdAt.toDate() : new Date();
+                        return {
+                            name: d.name,
+                            text: d.text,
+                            date: dt.toLocaleDateString('ar-EG', {
+                                day: 'numeric',
+                                month: 'short'
+                            })
+                        };
+                    });
+                    renderComments();
+                }, () => {
+                    renderComments();
+                });
+                return;
+            }
+            // نسخة معاينة مؤقتة داخل بيئة Claude فقط (إلى أن يتم ربط Firebase أعلاه)
+            try {
+                if (window.storage) {
+                    const res = await window.storage.get('qadri-comments', true);
+                    if (res && res.value) {
+                        comments = JSON.parse(res.value);
+                    }
+                }
+            } catch (e) { /* لا توجد تعليقات محفوظة بعد */ }
+            renderComments();
+        }
+
+        async function submitComment() {
+            const nameEl = document.getElementById('c-name');
+            const textEl = document.getElementById('c-text');
+            const status = document.getElementById('comment-status');
+            const name = nameEl.value.trim();
+            const text = textEl.value.trim();
+            if (!name || !text) {
+                status.textContent = "من فضلك اكتب الاسم والتعليق. ";
+                status.style.color = '#8f2f2f';
+                return;
+            }
+
+            if (useFirebase) {
+                try {
+                    await db.collection('comments').add({
+                        name,
+                        text,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    nameEl.value = '';
+                    textEl.value = '';
+                    status.style.color = '#0e3d2c';
+                    status.textContent = "تم نشر تعليقك، شكرًا لمشاركتك. ";
+                } catch (e) {
+                    status.style.color = '#8f2f2f';
+                    status.textContent = "تعذّر حفظ التعليق، حاول مرة أخرى. ";
+                }
+                return;
+            }
+
+            // نسخة معاينة مؤقتة داخل بيئة Claude فقط
+            const entry = {
+                name,
+                text,
+                date: new Date().toLocaleDateString('ar-EG', {
+                    day: 'numeric',
+                    month: 'short'
+                })
+            };
+            comments.push(entry);
+            renderComments();
+            nameEl.value = '';
+            textEl.value = '';
+            status.style.color = '#0e3d2c';
+            status.textContent = "تم نشر تعليقك، شكرًا لمشاركتك. ";
+            try {
+                if (window.storage) {
+                    await window.storage.set('qadri-comments', JSON.stringify(comments), true);
+                }
+            } catch (e) {
+                status.textContent += " (ملاحظة: التخزين الدائم غير متاح في هذه المعاينة). ";
+            }
+        }
+
+        loadComments();
+
+        /* قواعد أمان Firestore المقترحة (الصقها في Firebase Console > Firestore Database > Rules):
+
+        rules_version = '2';
+        service cloud.firestore {
+          match /databases/{database}/documents {
+            match /comments/{commentId} {
+              allow read: if true;
+              allow create: if request.resource.data.name is string
+                             && request.resource.data.name.size() > 0
+                             && request.resource.data.name.size() < 80
+                             && request.resource.data.text is string
+                             && request.resource.data.text.size() > 0
+                             && request.resource.data.text.size() < 600;
+              allow update, delete: if false;
+            }
+          }
+        }
+        */
+
+        // ================= نظام طلبات التواصل =================
+        function sendRequest() {
+            const name = document.getElementById('r-name').value.trim();
+            const phone = document.getElementById('r-phone').value.trim();
+            const type = document.getElementById('r-type').value;
+            const msg = document.getElementById('r-msg').value.trim();
+
+            if (!name || !msg) {
+                alert('من فضلك اكتب الاسم وتفاصيل الطلب.');
+                return;
+            }
+            const text = `طلب جديد من الموقع%0Aالاسم: ${name}%0Aالهاتف: ${phone || 'غير مذكور'}%0Aنوع الطلب: ${type || 'غير محدد'}%0Aالتفاصيل: ${msg}`;
+            window.open(`https://wa.me/201029209008?text=${text}`, '_blank');
+        }
+    </script>
+
+</body>
+
+</html>
